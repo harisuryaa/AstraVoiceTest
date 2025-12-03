@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voice bot testing</title>
+</head>
+
+<body>
+<div class="container">
+  <div class="status-bar">
+    <div class="status">
+      UAT testing Transport: <span id="connection-status">Disconnected</span>
+    </div>
+    <div class="url-input-group">
+      <label for="ws-url-input">WSS URL:</label>
+      <input type="text" id="ws-url-input" value="http://0.0.0.0:8080/ws/harisurya631@gmail.com/kwEGAWV4BW">
+
+    </div>
+    <div class="controls">
+      <button id="connect-btn">Connect</button>
+      <button id="disconnect-btn" disabled>Disconnect</button>
+    </div>
+  </div>
+
+  <audio id="bot-audio" autoplay></audio>
+
+  <div class="debug-panel">
+    <h3>Local Debug Info</h3>
+    <div id="debug-log"></div>
+  </div>
+</div>
+
+<script type="module" src="/src/app.ts"></script>
+<link rel="stylesheet" href="/src/style.css">
+</body>
+</html>
