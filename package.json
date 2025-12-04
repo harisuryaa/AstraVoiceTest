@@ -1,11 +1,13 @@
 {
   "name": "client",
   "version": "1.0.0",
-  "main": "index.js",
+  "homepage": "https://harisuryaa.github.io/AstraVoiceTest",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +17,7 @@
     "@types/node": "^22.13.1",
     "@types/protobufjs": "^6.0.0",
     "@vitejs/plugin-react-swc": "^3.7.2",
+    "gh-pages": "^6.3.0",
     "typescript": "^5.7.3",
     "vite": "^6.0.2"
   },
