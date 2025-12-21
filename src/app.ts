@@ -16,6 +16,9 @@ import {
   TwilioSerializer,
 } from '@pipecat-ai/websocket-transport';
 
+// Import the visualizer bridge
+import { updateVisualizer } from './Visualizer';
+
 class WebsocketClientApp {
   private static STREAM_SID = 'ws_mock_stream_sid';
   private static CALL_SID = 'ws_mock_stream_sid';
@@ -25,7 +28,7 @@ class WebsocketClientApp {
   private disconnectBtn: HTMLButtonElement | null = null;
   private statusSpan: HTMLElement | null = null;
   private debugLog: HTMLElement | null = null;
-  private wsUrlInput: HTMLInputElement | null = null; // Add reference for the input
+  private wsUrlInput: HTMLInputElement | null = null;
   private botAudio: HTMLAudioElement;
 
   constructor() {
@@ -34,11 +37,11 @@ class WebsocketClientApp {
     document.body.appendChild(this.botAudio);
     this.setupDOMElements();
     this.setupEventListeners();
+    
+    // Initialize visualizer with no track
+    updateVisualizer(null);
   }
 
-  /**
-   * Set up references to DOM elements and create necessary media elements
-   */
   private setupDOMElements(): void {
     this.connectBtn = document.getElementById(
       'connect-btn'
@@ -48,20 +51,14 @@ class WebsocketClientApp {
     ) as HTMLButtonElement;
     this.statusSpan = document.getElementById('connection-status');
     this.debugLog = document.getElementById('debug-log');
-    this.wsUrlInput = document.getElementById('ws-url-input') as HTMLInputElement; // Get the input element
+    this.wsUrlInput = document.getElementById('ws-url-input') as HTMLInputElement;
   }
 
-  /**
-   * Set up event listeners for connect/disconnect buttons
-   */
   private setupEventListeners(): void {
     this.connectBtn?.addEventListener('click', () => this.connect());
     this.disconnectBtn?.addEventListener('click', () => this.disconnect());
   }
 
-  /**
-   * Add a timestamped message to the debug log
-   */
   private log(message: string): void {
     if (!this.debugLog) return;
     const entry = document.createElement('div');
@@ -76,9 +73,6 @@ class WebsocketClientApp {
     console.log(message);
   }
 
-  /**
-   * Update the connection status display
-   */
   private updateStatus(status: string): void {
     if (this.statusSpan) {
       this.statusSpan.textContent = status;
@@ -106,10 +100,6 @@ class WebsocketClientApp {
     void websocketTransport?.sendRawMessage(startMessage);
   }
 
-  /**
-   * Check for available media tracks and set them up if present
-   * This is called when the bot is ready or when the transport state changes to ready
-   */
   setupMediaTracks() {
     if (!this.rtviClient) return;
     const tracks = this.rtviClient.tracks();
@@ -118,23 +108,15 @@ class WebsocketClientApp {
     }
   }
 
-  /**
-   * Set up listeners for track events (start/stop)
-   * This handles new tracks being added during the session
-   */
-
   setupTrackListeners() {
     if (!this.rtviClient) return;
 
-    // Listen for new tracks starting
     this.rtviClient.on(RTVIEvent.TrackStarted, (track: MediaStreamTrack, participant?: Participant) => {
-      // Only handle non-local (bot) tracks
       if (!participant?.local && track.kind === 'audio') {
         this.setupAudioTrack(track);
       }
     });
 
-    // Listen for tracks stopping
     this.rtviClient.on(RTVIEvent.TrackStopped, (track: MediaStreamTrack, participant?: Participant) => {
       this.log(
         `Track stopped: ${track.kind} from ${participant?.name || 'unknown'}`
@@ -142,10 +124,6 @@ class WebsocketClientApp {
     });
   }
 
-  /**
-   * Set up an audio track for playback
-   * Handles both initial setup and track updates
-   */
   private setupAudioTrack(track: MediaStreamTrack): void {
     this.log('Setting up audio track');
     if (
@@ -156,12 +134,11 @@ class WebsocketClientApp {
       if (oldTrack?.id === track.id) return;
     }
     this.botAudio.srcObject = new MediaStream([track]);
+    
+    // Update the visualizer with the new track
+    updateVisualizer(track);
   }
 
-  /**
-   * Initialize and connect to the bot
-   * This sets up the RTVI client, initializes devices, and establishes the connection
-   */
   public async connect(): Promise<void> {
     try {
       if (!this.wsUrlInput || !this.wsUrlInput.value) {
@@ -178,7 +155,7 @@ class WebsocketClientApp {
         serializer: new TwilioSerializer(),
         recorderSampleRate: 8000,
         playerSampleRate: 8000,
-        ws_url: wsUrl, // Use the URL from the input field
+        ws_url: wsUrl,
       };
 
       const RTVIConfig: PipecatClientOptions = {
@@ -197,6 +174,8 @@ class WebsocketClientApp {
             if (this.connectBtn) this.connectBtn.disabled = false;
             if (this.disconnectBtn) this.disconnectBtn.disabled = true;
             this.log('Client disconnected');
+            // Clear visualizer
+            updateVisualizer(null);
           },
           onBotReady: (data: any) => {
             this.log(`Bot ready: ${JSON.stringify(data)}`);
@@ -226,7 +205,6 @@ class WebsocketClientApp {
     } catch (error) {
       this.log(`Error connecting: ${(error as Error).message}`);
       this.updateStatus('Error');
-      // Clean up if there's an error
       if (this.rtviClient) {
         try {
           await this.rtviClient.disconnect();
@@ -236,10 +214,6 @@ class WebsocketClientApp {
       }
     }
   }
-
-  /**
-   * Disconnect from the bot and clean up media resources
-   */
 
   public async disconnect(): Promise<void> {
     if (this.rtviClient) {
@@ -255,6 +229,8 @@ class WebsocketClientApp {
             .forEach((track) => track.stop());
           this.botAudio.srcObject = null;
         }
+        // Clear visualizer
+        updateVisualizer(null);
       } catch (error) {
         this.log(`Error disconnecting: ${(error as Error).message}`);
       }

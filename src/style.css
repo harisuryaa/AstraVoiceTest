@@ -1,122 +1,296 @@
+/* Global Reset and Variables */
+:root {
+  --font-inter: 'Inter', sans-serif;
+  --color-bg: #F9FAFB; /* Very light gray background */
+  --color-text-dark: #111827;
+  --color-text-gray: #6B7280;
+  --color-primary-blue: #2563EB; /* The vibrant blue from the screenshot */
+  --color-primary-hover: #1D4ED8;
+  --color-border: #E5E7EB;
+  --color-white: #FFFFFF;
+
+  /* The blue gradient glow behind the card */
+  --glow-gradient: radial-gradient(50% 50% at 50% 50%, rgba(37, 99, 235, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+  --card-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+}
+
 body {
     margin: 0;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
+    padding: 0;
+    font-family: var(--font-inter);
+    background-color: var(--color-bg);
+    color: var(--color-text-dark);
+    overflow-x: hidden;
 }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.status-bar {
+/* Navigation Bar */
+.navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    background-color: #fff;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-    gap: 15px;
+    padding: 20px 40px;
+    background: var(--color-white);
+    border-bottom: 1px solid var(--color-border);
 }
 
-/* Styles for the new URL input group */
-.url-input-group {
+.logo {
+    font-weight: 700;
+    font-size: 1.25rem;
     display: flex;
     align-items: center;
     gap: 8px;
-    flex-grow: 1; /* Allows the input to take up available space */
 }
 
-.url-input-group label {
-    font-weight: bold;
-    white-space: nowrap;
+.nav-center {
+    display: flex;
+    gap: 30px;
 }
 
-.url-input-group input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
+.nav-center a {
+    text-decoration: none;
+    color: var(--color-text-dark);
+    font-weight: 500;
+    font-size: 0.95rem;
 }
 
-
-.controls button {
+.status-badge {
+    background: #F3F4F6;
     padding: 8px 16px;
-    margin-left: 10px;
-    border: none;
-    border-radius: 4px;
+    border-radius: 20px;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+#connection-status {
+    font-weight: 700;
+}
+
+/* Main Container & Hero Text */
+.main-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.hero-text h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+    line-height: 1.1;
+}
+
+.hero-text p {
+    font-size: 1.125rem;
+    color: var(--color-text-gray);
+    max-width: 600px;
+    margin: 0 auto 50px auto;
+    line-height: 1.6;
+}
+
+/* Interaction Section with Glow & Card */
+.interaction-section {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 50px;
+}
+
+/* The Blue Glow Background */
+.glow-background {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%;
+    height: 150%;
+    background: var(--glow-gradient);
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* The Main White Card */
+.main-card {
+    background: var(--color-white);
+    border-radius: 24px;
+    padding: 40px;
+    width: 100%;
+    max-width: 700px;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--color-border);
+    text-align: left;
+}
+
+.card-header {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #F3F4F6;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 25px;
+}
+
+/* Input Styling */
+.input-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+}
+
+.input-wrapper {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+#ws-url-input {
+    width: 100%;
+    padding: 16px 20px;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    font-size: 1rem;
+    font-family: var(--font-inter);
+    background: #F9FAFB;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#ws-url-input:focus {
+    outline: none;
+    border-color: var(--color-primary-blue);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    background: var(--color-white);
+}
+
+/* Buttons */
+.controls-area {
+    display: flex;
+    gap: 15px;
+}
+
+button {
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
     cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
-#connect-btn {
-    background-color: #4caf50;
-    color: white;
+.btn-primary {
+    background-color: var(--color-primary-blue);
+    color: var(--color-white);
+    border: none;
+    flex: 2; /* Primary button takes more space */
 }
 
-#disconnect-btn {
-    background-color: #f44336;
-    color: white;
+.btn-primary:hover {
+    background-color: var(--color-primary-hover);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.btn-secondary {
+    background-color: var(--color-white);
+    color: var(--color-text-dark);
+    border: 1px solid var(--color-border);
+    flex: 1;
+}
+
+.btn-secondary:hover {
+    background-color: #F3F4F6;
+    border-color: #D1D5DB;
 }
 
 button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    box-shadow: none;
 }
 
-.main-content {
-    background-color: #fff;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
-}
-
-.bot-container {
+/* Debug Section - Clean secondary card */
+.debug-section {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-#bot-video-container {
-    width: 640px;
-    height: 360px;
-    background-color: #e0e0e0;
-    border-radius: 8px;
-    margin: 20px auto;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
     justify-content: center;
 }
 
-#bot-video-container video {
+.debug-card {
+    background: var(--color-white);
+    border-radius: 16px;
+    padding: 25px;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    max-width: 700px;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--color-border);
+    text-align: left;
 }
 
-.debug-panel {
-    background-color: #fff;
-    border-radius: 8px;
-    padding: 20px;
+.debug-card h3 {
+    margin: 0 0 15px 0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-text-gray);
 }
 
-.debug-panel h3 {
-    margin: 0 0 10px 0;
-    font-size: 16px;
+.terminal-icon {
     font-weight: bold;
+    color: var(--color-primary-blue);
 }
 
 #debug-log {
-    height: 500px;
+    height: 300px;
     overflow-y: auto;
-    background-color: #f8f8f8;
-    padding: 10px;
-    border-radius: 4px;
-    font-family: monospace;
-    font-size: 12px;
-    line-height: 1.4;
+    background-color: #111827; /* Dark terminal background */
+    color: #10B981; /* Terminal green text */
+    padding: 15px;
+    border-radius: 8px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+  /* Fix for the logo dot alignment */
+.dot-wrapper {
+    margin-left: 6px;
+    padding-bottom: 7px; /* Reduced from 10px to 5px to sit on the baseline */
+    display: flex;       /* Ensures the dot respects the padding properly */
+    align-items: flex-end;
+}
+
+.dot {
+    width: 6px;
+    height: 6px;
+    background-color: #2C2C2C;
+    border-radius: 1px; /* Optional: Slight rounding to match the screenshot */
+}
+
+    .row-container {
+        display: flex; /* Lays out children horizontally */
+        align-items: flex-end; /* crossAxisAlignment: CrossAxisAlignment.end */
+    }
+    .brand-text {
+        font-weight: 800;              /* fontWeight: FontWeight.w800 */
+        font-size: 24px;               /* fontSize: 24 */
+        letter-spacing: -1.2px;        /* letterSpacing: -1.2 */
+        color: #2C2C2C;                /* color: Color(0xFF2C2C2C) */
+
+        /* For TextOverflow.ellipsis */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+.logo-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
