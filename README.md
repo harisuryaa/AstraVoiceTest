@@ -24,3 +24,10 @@ npm run dev
 ```
 
 5. Visit http://localhost:5173 in your browser.
+
+
+**To commit changes** 
+
+```
+npm run delpoy
+```
